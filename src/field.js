@@ -1,17 +1,17 @@
-import { each, warn, assign, isObject, isUndefined} from './util';
+import {each, warn, assign, isObject, isUndefined} from './util';
 
 export default {
 
     name: 'field',
 
-    props: ['field', 'class'],
+    props: ['field'],//, 'class'],
 
     data() {
         return assign({
             name: '',
             type: 'text',
             label: '',
-            attrs: {},
+            attributes: {},
             options: [],
             default: undefined
         }, this.field);
@@ -19,24 +19,32 @@ export default {
 
     created() {
 
-        this.key = `["${this.name.replace(/\./g, '"]["')}"]`;
+
+
+        this.key = this.name;//`["${this.name.replace(/\./g, '"]["')}"]`;
 
     },
 
     computed: {
 
+        filteredOptions() {
+            return this.filterOptions(this.$data.options);
+        },
         attrs: {
 
             get() {
 
                 if (this.enable && !this.$parent.evaluate(this.enable)) {
-                    return assign({disabled: 'true'}, this.$data.attrs);
+                    return assign({disabled: 'true'}, this.attributes);
                 }
 
-                return this.$data.attrs;
+                return this.attributes;
             },
+            set(attributes) {
+                this.attributes = attributes;
+            }
 
-            cache: false
+            // cache: false
         },
 
         value: {
@@ -65,7 +73,7 @@ export default {
 
             },
 
-            cache: false
+            // cache: false
         }
 
     },
@@ -73,7 +81,7 @@ export default {
     methods: {
 
         filterOptions(options) {
-
+            // debugger;
             var opts = [];
 
             if (!options) {
@@ -92,14 +100,15 @@ export default {
             return opts;
         }
 
-    },
-
-    filters: {
-
-        options(options) {
-            return this.filterOptions(options);
-        }
-
     }
+
+    // filters: {
+    //
+    //     options(options) {
+    //         debugger;
+    //         return this.filterOptions(options);
+    //     }
+    //
+    // }
 
 };

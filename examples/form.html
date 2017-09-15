@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
-        <script src="../dist/vue-form.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.3/vue.js"></script>
+        <script src="../dist/built.js"></script>
     </head>
     <body>
 
@@ -31,7 +31,7 @@
 
             </div>
 
-            <pre>{{ values | json }}</pre>
+            <pre>{{ values }}</pre>
 
         </div>
 
@@ -45,7 +45,7 @@
 
                     fields: {
 
-                        text: {
+                        'deep.nested.text': {
                             label: 'Text',
                             type: 'text'
                         },
@@ -55,9 +55,9 @@
                             type: 'textarea'
                         },
 
-                        select: {
+                        selectah: {
                             label: 'Select',
-                            type: 'select',
+                            type: 'selectah',
                             default: 1,
                             options: {
                                 one: 1,
@@ -66,17 +66,17 @@
                             }
                         },
 
-                        number: {
+                        'deep.nested.number': {
                             label: 'Number',
                             type: 'number'
                         },
 
-                        custom: {
-
-                            label: 'Custom',
-                            type: 'custom'
-
-                        }
+//                        custom: {
+//
+//                            label: 'Custom',
+//                            type: 'custom'
+//
+//                        }
 
                     },
 
