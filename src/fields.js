@@ -74,13 +74,10 @@ export default function (Vue) {
                     return this.values.getField(field);
                 }
 
-                if (Vue.vueForm.useLegacyCode) {
-                    return this.$get(`values${field.key}`);
-                }
-                else {
-                    return this.getFromPath(field.name, this.values);//
 
-                }
+                return this.getFromPath(field.name, this.values);//
+
+
             },
 
             setField(field, value, prev) {
@@ -89,13 +86,10 @@ export default function (Vue) {
                     this.values.setField(field, value, prev);
                 } else {
 
-                    if (Vue.vueForm.useLegacyCode) {
-                        this.$set(`values${field.key}`, value);
-                    }
-                    else {
-                        this.setFromPath(field.name, value, this.values);
 
-                    }
+                    this.setFromPath(field.name, value, this.values);
+
+
                 }
 
             },

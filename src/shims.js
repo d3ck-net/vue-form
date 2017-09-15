@@ -9,12 +9,14 @@ export default {
 
                 let keys = path.split('.');
 
-                forEach(keys, (key) => {
+                for (var i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+
                     if (typeof currentScope === 'undefined') {
-                        return false;
+                        break;
                     }
                     currentScope = currentScope[key];
-                });
+                }
 
                 return currentScope;
 
@@ -24,19 +26,18 @@ export default {
 
                 let keys = path.split('.');
 
-                let lastKey = keys.splice(keys.length - 1, 1)[0];
+                while (keys.length > 1) {
 
-                forEach(keys, (key) => {
+                    let key = keys.shift();
 
                     if (typeof currentScope[key] === 'undefined') {
-                        this.$set(currentScope,key,{});
+                        Vue.set(currentScope, key, {});
                     }
                     currentScope = currentScope[key];
-                });
+                }
 
-                this.$set(currentScope,lastKey,value);
+                Vue.set(currentScope, keys[0], value);
 
-                // currentScope[lastKey] = value;
 
             }
         }

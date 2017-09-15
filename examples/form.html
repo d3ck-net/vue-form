@@ -43,6 +43,13 @@
         Vue.filter('json', (data) => (JSON.stringify(data, null, 2)));
     }
 
+    var evaluate = function(expression)
+    {
+        eval(expression);
+    }
+
+    evaluate.call({a:'test'},"with(this){ console.log(a); } ");
+
     new Vue({
 
         el: '#app',
@@ -54,6 +61,12 @@
                 'deep.nested.text': {
                     label: 'Text',
                     type: 'text'
+                },
+
+                'dependingText': {
+                    label: 'Text when Text',
+                    type: 'text',
+                    //show: 'deep.nested.text == show'
                 },
 //
                 textarea: {
@@ -89,7 +102,6 @@
             values: {}
 
         },
-
         components: {
 
             customFields: {

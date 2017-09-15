@@ -17,16 +17,6 @@ export default {
         }, this.field);
     },
 
-    created() {
-
-
-        if (Vue.vueForm.useLegacyCode) {
-            this.key = `["${this.name.replace(/\./g, '"]["')}"]`;
-        }
-
-
-    },
-
     computed: {
 
         filteredOptions() {

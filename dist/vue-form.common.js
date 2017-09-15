@@ -497,13 +497,10 @@ if (typeof window !== 'undefined' && window.Vue) {
                     return this.values.getField(field);
                 }
 
-                if (Vue.vueForm.useLegacyCode) {
-                    return this.$get(`values${field.key}`);
-                }
-                else {
-                    return this.getFromPath(field.name, this.values);//
 
-                }
+                return this.getFromPath(field.name, this.values);//
+
+
             },
 
             setField(field, value, prev) {
@@ -512,13 +509,10 @@ if (typeof window !== 'undefined' && window.Vue) {
                     this.values.setField(field, value, prev);
                 } else {
 
-                    if (Vue.vueForm.useLegacyCode) {
-                        this.$set(`values${field.key}`, value);
-                    }
-                    else {
-                        this.setFromPath(field.name, value, this.values);
 
-                    }
+                    this.setFromPath(field.name, value, this.values);
+
+
                 }
 
             },
@@ -626,16 +620,6 @@ var fields = {
         }, this.field);
     },
 
-    created() {
-
-
-        if (Vue.vueForm.useLegacyCode) {
-            this.key = `["${this.name.replace(/\./g, '"]["')}"]`;
-        }
-
-
-    },
-
     computed: {
 
         filteredOptions() {
@@ -736,12 +720,14 @@ module.exports = "<div>\n\n    <div v-for=\"field in fields\">\n        <label v
 
                 let keys = path.split('.');
 
-                Object(__WEBPACK_IMPORTED_MODULE_0_lodash__["forEach"])(keys, (key) => {
+                for (var i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+
                     if (typeof currentScope === 'undefined') {
-                        return false;
+                        break;
                     }
                     currentScope = currentScope[key];
-                });
+                }
 
                 return currentScope;
 
@@ -751,19 +737,18 @@ module.exports = "<div>\n\n    <div v-for=\"field in fields\">\n        <label v
 
                 let keys = path.split('.');
 
-                let lastKey = keys.splice(keys.length - 1, 1)[0];
+                while (keys.length > 1) {
 
-                Object(__WEBPACK_IMPORTED_MODULE_0_lodash__["forEach"])(keys, (key) => {
+                    let key = keys.shift();
 
                     if (typeof currentScope[key] === 'undefined') {
-                        this.$set(currentScope,key,{});
+                        Vue.set(currentScope, key, {});
                     }
                     currentScope = currentScope[key];
-                });
+                }
 
-                this.$set(currentScope,lastKey,value);
+                Vue.set(currentScope, keys[0], value);
 
-                // currentScope[lastKey] = value;
 
             }
         }
