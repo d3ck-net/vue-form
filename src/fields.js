@@ -9,7 +9,7 @@ export default function (Vue) {
 
         name: 'fields',
 
-        mixins:[shims],
+        mixins: [shims],
         props: {
 
             config: {
@@ -21,7 +21,12 @@ export default function (Vue) {
 
             values: {
                 type: Object
-            }
+            },
+            prefix:
+                {
+                    type: String,
+                    default: ""
+                }
 
         },
 
@@ -45,7 +50,10 @@ export default function (Vue) {
                     type = Vue.extend(Field).extend(type);
                 }
 
-                components[name] = type;
+                if (!Vue.vueForm.useLegacyCode && !this.prefix && Vue.config.isReservedTag(name)) {
+                    throw ('field type: "' + name + '" is a reserved HTML tag name in Vue 2.x');
+                }
+                components[this.prefix + name] = type;
             });
 
         },
@@ -66,7 +74,13 @@ export default function (Vue) {
                     return this.values.getField(field);
                 }
 
-                return this.getFromPath(field.key,this.values);//this.values[field.key];//this.$get(`values${field.key}`);
+                if (Vue.vueForm.useLegacyCode) {
+                    return this.$get(`values${field.key}`);
+                }
+                else {
+                    return this.getFromPath(field.name, this.values);//
+
+                }
             },
 
             setField(field, value, prev) {
@@ -75,9 +89,13 @@ export default function (Vue) {
                     this.values.setField(field, value, prev);
                 } else {
 
-                    this.setFromPath(field.key,value,this.values);
+                    if (Vue.vueForm.useLegacyCode) {
+                        this.$set(`values${field.key}`, value);
+                    }
+                    else {
+                        this.setFromPath(field.name, value, this.values);
 
-                    // this.$set(this.values, field.key, value)//`values${field.key}`, value);
+                    }
                 }
 
             },
@@ -141,13 +159,13 @@ export default function (Vue) {
 };
 
 export var fields = {
-    text: '<input type="text" v-bind="attrs" v-model="value">',
-    textarea: '<textarea v-bind="attrs" v-model="value"></textarea>',
+    text: '<input type="text" v-bind="attributes" v-model="value">',
+    textarea: '<textarea v-bind="attributes" v-model="value"></textarea>',
     radio: `<template v-for="option in filteredOptions">
-                    <input type="radio" v-bind="attrs" :name="name" :value="option.value" v-model="value"> <label>{{ option.text }}</label>
+                    <input type="radio" v-bind="attributes" :name="name" :value="option.value" v-model="value"> <label>{{ option.text }}</label>
                  </template>`,
-    checkbox: '<input type="checkbox" v-bind="attrs" v-model="value">',
-    selectah: `<select v-bind="attrs" v-model="value">
+    checkbox: '<input type="checkbox" v-bind="attributes" v-model="value">',
+    select: `<select v-bind="attributes" v-model="value">
                      <template v-for="option in filteredOptions">
                          <optgroup :label="option.label" v-if="option.label">
                              <option v-for="opt in option.options" :value="opt.value">{{ opt.text }}</option>
@@ -155,6 +173,6 @@ export var fields = {
                          <option :value="option.value" v-else>{{ option.text }}</option>
                      </template>
                  </select>`,
-    range: '<input type="range" v-bind="attrs" v-model="value">',
-    number: '<input type="number" v-bind="attrs" v-model="value">'
+    range: '<input type="range" v-bind="attributes" v-model="value">',
+    number: '<input type="number" v-bind="attributes" v-model="value">'
 };

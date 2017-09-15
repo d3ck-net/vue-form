@@ -11,7 +11,7 @@ export default {
             name: '',
             type: 'text',
             label: '',
-            attributes: {},
+            attrs: {},
             options: [],
             default: undefined
         }, this.field);
@@ -20,8 +20,10 @@ export default {
     created() {
 
 
+        if (Vue.vueForm.useLegacyCode) {
+            this.key = `["${this.name.replace(/\./g, '"]["')}"]`;
+        }
 
-        this.key = this.name;//`["${this.name.replace(/\./g, '"]["')}"]`;
 
     },
 
@@ -30,21 +32,18 @@ export default {
         filteredOptions() {
             return this.filterOptions(this.$data.options);
         },
-        attrs: {
+        attributes: {
 
             get() {
 
                 if (this.enable && !this.$parent.evaluate(this.enable)) {
-                    return assign({disabled: 'true'}, this.attributes);
+                    return assign({disabled: 'true'}, this.attrs);
                 }
 
-                return this.attributes;
+                return this.attrs;
             },
-            set(attributes) {
-                this.attributes = attributes;
-            }
 
-            // cache: false
+
         },
 
         value: {
@@ -73,7 +72,6 @@ export default {
 
             },
 
-            // cache: false
         }
 
     },
@@ -81,7 +79,6 @@ export default {
     methods: {
 
         filterOptions(options) {
-            // debugger;
             var opts = [];
 
             if (!options) {
@@ -102,13 +99,5 @@ export default {
 
     }
 
-    // filters: {
-    //
-    //     options(options) {
-    //         debugger;
-    //         return this.filterOptions(options);
-    //     }
-    //
-    // }
 
 };

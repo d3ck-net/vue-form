@@ -7,7 +7,6 @@ export default {
 
             getFromPath(path, currentScope) {
 
-                currentScope = this;
                 let keys = path.split('.');
 
                 forEach(keys, (key) => {
