@@ -5,18 +5,19 @@
 
 'use strict';
 
-require('lodash');
-
 /**
  * Utility functions.
  */
 
 var debug = false;
 var util = {};
+var set;
+
 
 var isArray = Array.isArray;
 
 var Util = function (Vue) {
+    set = Vue.set;
     util = Vue.util;
     debug = Vue.config.debug || !Vue.config.silent;
 };
@@ -59,6 +60,42 @@ function trigger(el, event) {
     el.dispatchEvent(e);
 }
 
+function getFromPath(path, currentScope) {
+
+    var keys = path.split('.');
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+
+        if (typeof currentScope === 'undefined') {
+            break;
+        }
+        currentScope = currentScope[key];
+    }
+
+    return currentScope;
+
+}
+
+function setFromPath(path, value, currentScope) {
+
+    var keys = path.split('.');
+
+    while (keys.length > 1) {
+
+        var key = keys.shift();
+
+        if (typeof currentScope[key] !== 'object') { //force ? typeof currentScope[key] !== 'object')
+            set(currentScope, key, {});
+        }
+        currentScope = currentScope[key];
+    }
+
+    set(currentScope, keys[0], value);
+
+
+}
+
 function camelize(str) {
     return util.camelize(str);
 }
@@ -67,7 +104,22 @@ function pull(arr, value) {
     arr.splice(arr.indexOf(value), 1);
 }
 
-
+// export function get(obj, path, def) {
+//
+//     path = path.replace(/\[(\w+)\]/g, '.$1');
+//     path = path.replace(/^\./, '').split('.');
+//
+//     for (var i = 0, len = path.length; i < len; i++) {
+//
+//         if (!isObject(obj)) {
+//             return def;
+//         }
+//
+//         obj = obj[path[i]];
+//     }
+//
+//     return isUndefined(obj) ? def : obj;
+// }
 
 function each(obj, iterator) {
 
@@ -129,7 +181,7 @@ var Field = {
         },
         attributes: {
 
-            get: function get$$1() {
+            get: function get() {
 
                 if (this.enable && !this.$parent.evaluate(this.enable)) {
                     return assign({disabled: 'true'}, this.attrs);
@@ -143,7 +195,7 @@ var Field = {
 
         value: {
 
-            get: function get$$1() {
+            get: function get() {
 
                 var value = this.$parent.getField(this);
 
@@ -201,49 +253,6 @@ var Field = {
 
 var template = "<div>\n\n    <div v-for=\"field in fields\">\n        <label v-if=\"field.type != 'checkbox'\">{{ field.label }}</label>\n        <component :is=\"prefix + field.type\" :field=\"field\"></component>\n    </div>\n\n</div>\n";
 
-var shims = {
-    methods:
-        {
-
-
-            getFromPath: function getFromPath(path, currentScope) {
-
-                var keys = path.split('.');
-
-                for (var i = 0; i < keys.length; i++) {
-                    var key = keys[i];
-
-                    if (typeof currentScope === 'undefined') {
-                        break;
-                    }
-                    currentScope = currentScope[key];
-                }
-
-                return currentScope;
-
-            },
-
-            setFromPath: function setFromPath(path, value, currentScope) {
-
-                var keys = path.split('.');
-
-                while (keys.length > 1) {
-
-                    var key = keys.shift();
-
-                    if (typeof currentScope[key] === 'undefined') { //force ? typeof currentScope[key] !== 'object')
-                        Vue.set(currentScope, key, {});
-                    }
-                    currentScope = currentScope[key];
-                }
-
-                Vue.set(currentScope, keys[0], value);
-
-
-            }
-        }
-};
-
 var evaluator = function (expression) {
     try {
         var res = eval("with(this){ " + expression + " } ");
@@ -264,7 +273,6 @@ var Fields = function (Vue) {
 
         name: 'fields',
 
-        mixins: [shims],
         props: {
 
             config: {
@@ -334,7 +342,7 @@ var Fields = function (Vue) {
                 }
 
 
-                return this.getFromPath(field.name, this.values);//
+                return getFromPath(field.name, this.values);//
 
 
             },
@@ -346,7 +354,7 @@ var Fields = function (Vue) {
                 } else {
 
 
-                    this.setFromPath(field.name, value, this.values);
+                    setFromPath(field.name, value, this.values);
 
 
                 }

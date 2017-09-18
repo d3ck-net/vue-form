@@ -1,7 +1,6 @@
 import Field from './field';
 import template from './templates/default.html';
-import {each, warn, assign, isArray, isObject, isString} from './util';
-import shims from './shims';
+import {each, warn, assign, isArray, isObject, isString,getFromPath,setFromPath} from './util';
 
 let evaluator = function (expression) {
     try {
@@ -23,7 +22,6 @@ export default function (Vue) {
 
         name: 'fields',
 
-        mixins: [shims],
         props: {
 
             config: {
@@ -89,7 +87,7 @@ export default function (Vue) {
                 }
 
 
-                return this.getFromPath(field.name, this.values);//
+                return getFromPath(field.name, this.values);//
 
 
             },
@@ -101,7 +99,7 @@ export default function (Vue) {
                 } else {
 
 
-                    this.setFromPath(field.name, value, this.values);
+                    setFromPath(field.name, value, this.values);
 
 
                 }

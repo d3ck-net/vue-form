@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: node:8.4.0
+      - image: node:8
     working_directory: ~/vue-form
     steps:
       - checkout
