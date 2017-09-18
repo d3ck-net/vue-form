@@ -30,7 +30,7 @@ export default {
 
                     let key = keys.shift();
 
-                    if (typeof currentScope[key] === 'undefined') {
+                    if (typeof currentScope[key] === 'undefined') { //force ? typeof currentScope[key] !== 'object')
                         Vue.set(currentScope, key, {});
                     }
                     currentScope = currentScope[key];

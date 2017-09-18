@@ -3,6 +3,20 @@ import template from './templates/default.html';
 import {each, warn, assign, isArray, isObject, isString} from './util';
 import shims from './shims';
 
+let evaluator = function (expression) {
+    try {
+        let res = eval("with(this){ " + expression + " } ");
+        return res;
+    }
+    catch (e) {
+        if (!Vue.config.silent)
+        {
+            console.warn(e);
+        }
+        return;
+    }
+};
+
 export default function (Vue) {
 
     return {
@@ -123,6 +137,10 @@ export default function (Vue) {
                 return fields;
             },
 
+            evaluator() {
+
+            },
+
             evaluate(expr, data) {
 
                 data = data || this.values;
@@ -130,11 +148,13 @@ export default function (Vue) {
                 if (isString(expr)) {
 
                     var comp = new Vue({data});
-                    var result = comp.$eval(expr);
+
+                    var result = evaluator.call(comp, expr);
 
                     comp.$destroy();
 
                     return result;
+
                 }
 
                 return expr.call(this, data, this);

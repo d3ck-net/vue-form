@@ -4,8 +4,7 @@ export default {
 
     name: 'field',
 
-    props: ['field'],//, 'class'],
-
+    props:['field','class'],
     data() {
         return assign({
             name: '',
